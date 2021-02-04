@@ -1,16 +1,16 @@
-//import 'package:autoservicio/src/utils/utils.dart' as utils;
-import 'package:autoservicio/src/widgets/card_swiper_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class HomePage extends StatefulWidget {
+
+
+class AceitePage extends StatefulWidget {
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _AceitePageState createState() => _AceitePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-final formKey = GlobalKey<FormState>();
+class _AceitePageState extends State<AceitePage> {
+final formaceiteKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,41 +25,46 @@ final formKey = GlobalKey<FormState>();
             )
         ],
         ),
-      body: Container(
-        child:  SingleChildScrollView(
-            child: Column(
-            
-            children:<Widget>[
-            _swiperTarjetas(),
-            formulario(),
-          ],
-            
-          ),
+      body: 
+       Column(
+        children: <Widget>[
+        Container(
+          width: 400,
+          height: 200,
+          decoration: BoxDecoration(
+          color: Colors.black,
+          image: DecorationImage(
+          image:AssetImage("lib/images/aceite.jpg"), 
+          fit:BoxFit.cover
         ),
-      
-        ) ,
-    );
-  }
+       ),
+      ),
+         
+        Container(
+          child: Column(
+          children:<Widget>[
+            formulario(),
+          ], 
+         ),
+        ),
+  
+  
 
-  Widget _swiperTarjetas() {
+      ]
+    ),
+  );
+}
 
-   return CardSwiper(
-     autos: [1,2,3,4,5],
-
-     
-   );
-  }
-
+ 
  Widget formulario(){
    return Form(
-     key: formKey,
+     key: formaceiteKey,
      child:Column(children: <Widget>[
        _crearKilometraje(),
-       _crearYear(),
+       _crearCosto(),
        _crearBoton(context),
      ],
-     ), 
-    
+    ), 
    );
  }
 
@@ -67,7 +72,7 @@ Widget _crearKilometraje(){
   return TextFormField(
     keyboardType:TextInputType.number,
     decoration: InputDecoration(
-      labelText: 'Kilometraje'
+      labelText: 'Ingresar Kilometraje Actual'
     ),
     validator: (value){
       final intNumber = int.tryParse(value);
@@ -79,18 +84,18 @@ Widget _crearKilometraje(){
   );
 }
 
-Widget _crearYear(){
+Widget _crearCosto(){
   return TextFormField(
     keyboardType:TextInputType.number,
     decoration: InputDecoration(
-      labelText: 'Año'
+      labelText: 'Ingrese Costo'
     ),
      validator: (value) {
         final intNumber = int.tryParse(value);
         if (intNumber != null && intNumber <= 2021 && intNumber >= 1995){
           return null;
         }
-        return 'Ingrese un año válido';
+        return 'Ingrese un costo válido';
     },
   );
 }
@@ -102,7 +107,7 @@ Widget _crearYear(){
      ),
      color: Colors.redAccent,
      textColor: Colors.white,
-     label: Text('Calcular'),
+     label: Text('Guardar'),
      icon: Icon(Icons.check),
      onPressed: ()=>Navigator.pushNamed(context, 'producto' ),
    );
