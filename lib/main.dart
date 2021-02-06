@@ -2,7 +2,7 @@ import 'package:autoservicio/src/pages/grid_page.dart';
 import 'package:autoservicio/src/pages/home_page.dart';
 import 'package:autoservicio/src/pages/aceite.dart';
 //import 'package:autoservicio/src/pages/bujia.dart';
-import 'package:autoservicio/src/pages/pruebamain.dart';
+//import 'package:autoservicio/src/pages/pruebamain.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         '/': (BuildContext context) =>HomePage(),
         'producto': (BuildContext context) => ProductPage(),
         'aceite':(BuildContext context) => AceitePage(),
-        'prueba':(BuildContext context) => SamplePage(),
+        //'prueba':(BuildContext context) => SamplePage(),
              },
       
     );

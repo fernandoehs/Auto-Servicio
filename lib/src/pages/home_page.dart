@@ -1,4 +1,8 @@
 //import 'package:autoservicio/src/utils/utils.dart' as utils;
+import 'dart:ffi';
+
+import 'package:autoservicio/src/models/producto_model.dart';
+import 'package:autoservicio/src/providers/autos_providers.dart';
 import 'package:autoservicio/src/widgets/card_swiper_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +11,13 @@ class HomePage extends StatefulWidget {
 
   @override
   _HomePageState createState() => _HomePageState();
+ 
 }
 
 class _HomePageState extends State<HomePage> {
 final formKey = GlobalKey<FormState>();
+final productoProvider = new AutosProvider();
+ProductoModel producto = new ProductoModel();
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +39,7 @@ final formKey = GlobalKey<FormState>();
             children:<Widget>[
             _swiperTarjetas(),
             formulario(),
+            _recibirNotificaciones(),
           ],
             
           ),
@@ -65,10 +73,12 @@ final formKey = GlobalKey<FormState>();
 
 Widget _crearKilometraje(){
   return TextFormField(
+    initialValue: producto.kilometraje.toString(),
     keyboardType:TextInputType.number,
     decoration: InputDecoration(
       labelText: 'Kilometraje'
     ),
+    onSaved: (value)=>producto.kilometraje = value,
     validator: (value){
       final intNumber = int.tryParse(value);
         if (intNumber != null && intNumber <= 999999 && intNumber >= 5000){
@@ -81,10 +91,12 @@ Widget _crearKilometraje(){
 
 Widget _crearYear(){
   return TextFormField(
+    initialValue: producto.year.toString(),
     keyboardType:TextInputType.number,
     decoration: InputDecoration(
       labelText: 'Año'
     ),
+    onSaved: (value)=> producto.year =value,
      validator: (value) {
         final intNumber = int.tryParse(value);
         if (intNumber != null && intNumber <= 2021 && intNumber >= 1995){
@@ -104,8 +116,33 @@ Widget _crearYear(){
      textColor: Colors.white,
      label: Text('Calcular'),
      icon: Icon(Icons.check),
-     onPressed: ()=>Navigator.pushNamed(context, 'producto' ),
+     //onPressed: ()=>Navigator.pushNamed(context, 'producto' ),
+     onPressed: _submit,
    );
+ }
+ Widget _recibirNotificaciones(){
+   return SwitchListTile(
+     value: producto.disponible,
+     title: Text('Disponible'),
+     activeColor: Colors.deepPurple,
+     onChanged: (value)=> setState((){
+       producto.disponible=value;
+     }),
+     );
+ }
+
+ void _submit(){
+
+
+   if(!formKey.currentState.validate()) return;
+
+   formKey.currentState.save();
+   print(producto.year);
+   print(producto.kilometraje);
+   print(producto.disponible);
+   print(producto.id);
+   
+   productoProvider.crearAuto(producto);
  }
 
 }
