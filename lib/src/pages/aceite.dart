@@ -2,6 +2,8 @@
 
 //import 'package:autoservicio/src/models/producto_model.dart';
 //import 'package:autoservicio/src/widgets/card_swiper_widget.dart';
+import 'package:autoservicio/src/models/producto_model.dart';
+import 'package:autoservicio/src/providers/autos_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,10 +15,20 @@ class AceitePage extends StatefulWidget {
 }
 
 class _AceitePageState extends State<AceitePage> {
-final formaceiteKey = GlobalKey<FormState>();
+final formKey = GlobalKey<FormState>();
+final productoProvider = new AutosProvider();
+
+
+ProductoModel producto = new ProductoModel();
 
   @override
   Widget build(BuildContext context) {
+
+    final ProductoModel prodData = ModalRoute.of(context).settings.arguments;
+     if (prodData !=null){
+       producto = prodData;
+     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Auto Servicio'),
@@ -61,10 +73,10 @@ final formaceiteKey = GlobalKey<FormState>();
  
  Widget formulario(){
    return Form(
-     key: formaceiteKey,
+     key: formKey,
      child:Column(children: <Widget>[
        _crearKilometraje(),
-       _crearCosto(),
+       _crearYear(),
        _crearBoton(context),
       // _recibirNotificaciones(),
      ],
@@ -72,12 +84,15 @@ final formaceiteKey = GlobalKey<FormState>();
    );
  }
 
+
 Widget _crearKilometraje(){
   return TextFormField(
+    initialValue: producto.kilometraje.toString(),
     keyboardType:TextInputType.number,
     decoration: InputDecoration(
-      labelText: 'Ingresar Kilometraje Actual'
+      labelText: 'Kilometraje'
     ),
+    onSaved: (value)=>producto.kilometraje = value,
     validator: (value){
       final intNumber = int.tryParse(value);
         if (intNumber != null && intNumber <= 999999 && intNumber >= 5000){
@@ -90,6 +105,7 @@ Widget _crearKilometraje(){
 
 Widget _crearCosto(){
   return TextFormField(
+    initialValue: producto.year.toString(),
     keyboardType:TextInputType.number,
     decoration: InputDecoration(
       labelText: 'Ingrese Costo'
@@ -103,6 +119,23 @@ Widget _crearCosto(){
     },
   );
 }
+Widget _crearYear(){
+  return TextFormField(
+    initialValue: producto.year.toString(),
+    keyboardType:TextInputType.number,
+    decoration: InputDecoration(
+      labelText: 'Año'
+    ),
+    onSaved: (value)=> producto.year =value,
+     validator: (value) {
+        final intNumber = int.tryParse(value);
+        if (intNumber != null && intNumber <= 2021 && intNumber >= 1995){
+          return null;
+        }
+        return 'Ingrese un año válido';
+    },
+  );
+}
 
  Widget _crearBoton(BuildContext context){
    return RaisedButton.icon(
@@ -113,9 +146,27 @@ Widget _crearCosto(){
      textColor: Colors.white,
      label: Text('Guardar'),
      icon: Icon(Icons.check),
-     onPressed: ()=>Navigator.pushNamed(context, 'producto' ),
+     onPressed: _submit,
    );
  }
- 
+  void _submit(){
 
+
+   if(!formKey.currentState.validate()) return;
+
+   formKey.currentState.save();
+   //print(producto.year);
+   //print(producto.kilometraje);
+   //print(producto.disponible);
+   //print(producto.id);
+   
+   if(producto.id == null){
+   
+   productoProvider.crearAuto(producto);
+      
+   }else{
+      productoProvider.editarAuto(producto);
+ }
+
+}
 }

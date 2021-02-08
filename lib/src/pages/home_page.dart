@@ -1,5 +1,5 @@
 //import 'package:autoservicio/src/utils/utils.dart' as utils;
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:autoservicio/src/models/producto_model.dart';
 import 'package:autoservicio/src/providers/autos_providers.dart';
@@ -33,19 +33,31 @@ ProductoModel producto = new ProductoModel();
         ],
         ),
       body: Container(
-        child:  SingleChildScrollView(
+        
+       // child:  SingleChildScrollView(
             child: Column(
             
             children:<Widget>[
-            _swiperTarjetas(),
-            formulario(),
+                  _swiperTarjetas(),
+            
+           //formulario(),
+            
             _recibirNotificaciones(),
+              Expanded(
+              
+                        child:  _crearListado(),
+                      
+              )
+              
+            
+            
           ],
             
           ),
-        ),
+        //),
       
         ) ,
+        
     );
   }
 
@@ -62,9 +74,10 @@ ProductoModel producto = new ProductoModel();
    return Form(
      key: formKey,
      child:Column(children: <Widget>[
-       _crearKilometraje(),
-       _crearYear(),
-       _crearBoton(context),
+     // _crearKilometraje(),
+       //_crearYear(),
+       //_crearBoton(context),
+      
      ],
      ), 
     
@@ -137,12 +150,49 @@ Widget _crearYear(){
    if(!formKey.currentState.validate()) return;
 
    formKey.currentState.save();
-   print(producto.year);
-   print(producto.kilometraje);
-   print(producto.disponible);
-   print(producto.id);
+   //print(producto.year);
+   //print(producto.kilometraje);
+  // print(producto.disponible);
+   //print(producto.id);
    
    productoProvider.crearAuto(producto);
+ }
+
+ Widget _crearListado(){
+
+   return FutureBuilder(
+     future:productoProvider.cargarAuto(),
+     builder:(BuildContext context, AsyncSnapshot <List<ProductoModel>> snapshot){
+      if(snapshot.hasData){
+        final autos= snapshot.data;
+        return ListView.builder(
+          itemCount: autos.length,
+          itemBuilder: (context, i) => _crearItem(context, autos[i]),
+        );
+      }else{
+        return Center( child: CircularProgressIndicator());
+      }
+     },
+   );
+  
+ }
+
+ Widget _crearItem( BuildContext context, ProductoModel autos){
+  
+   return Dismissible(
+     key: UniqueKey(),
+     background: Container(
+       color: Colors.red,
+     ),
+     onDismissed: (direccion){
+       productoProvider.borrarAuto(autos.id);
+     },
+        child: ListTile(
+         title: Text('${autos.kilometraje} - ${autos.year}'),
+         subtitle: Text(autos.id),
+         onTap: ()=>Navigator.pushNamed(context,'aceite',arguments:autos),
+     ),
+   );
  }
 
 }
